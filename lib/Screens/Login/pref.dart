@@ -33,9 +33,9 @@ class _PrefScreenState extends State<PrefScreen> {
   ];
   List<bool> isSelected = [true, false];
   List preferredLanguage = Hive.box('settings')
-      .get('preferredLanguage', defaultValue: ['Hindi'])?.toList() as List;
+      .get('preferredLanguage', defaultValue: ['English'])?.toList() as List;
   String region =
-      Hive.box('settings').get('region', defaultValue: 'India') as String;
+      Hive.box('settings').get('region', defaultValue: 'Vietnam') as String;
 
   @override
   Widget build(BuildContext context) {

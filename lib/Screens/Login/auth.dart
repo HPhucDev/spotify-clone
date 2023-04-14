@@ -54,9 +54,9 @@ class _AuthScreenState extends State<AuthScreen> {
           child: Stack(
             children: [
               Positioned(
-                left: MediaQuery.of(context).size.width / 1.85,
+                left: MediaQuery.of(context).size.width / 70.5,
                 child: SizedBox(
-                  width: MediaQuery.of(context).size.width,
+                  width: MediaQuery.of(context).size.width * 1.3,
                   height: MediaQuery.of(context).size.width,
                   child: const Image(
                     image: AssetImage(
@@ -112,7 +112,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               children: [
                                 RichText(
                                   text: TextSpan(
-                                    text: 'Black\nHole\n',
+                                    text: 'Spotify\nUTE\n',
                                     style: TextStyle(
                                       height: 0.97,
                                       fontSize: 80,
@@ -252,30 +252,30 @@ class _AuthScreenState extends State<AuthScreen> {
                                     ),
                                   ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 20.0,
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Text(
-                                            AppLocalizations.of(context)!
-                                                .disclaimer,
-                                          ),
-                                        ],
-                                      ),
-                                      Text(
-                                        AppLocalizations.of(context)!
-                                            .disclaimerText,
-                                        style: TextStyle(
-                                          color: Colors.grey.withOpacity(0.7),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                // Padding(
+                                //   padding: const EdgeInsets.symmetric(
+                                //     vertical: 20.0,
+                                //   ),
+                                //   child: Column(
+                                //     children: [
+                                //       Row(
+                                //         children: [
+                                //           Text(
+                                //             AppLocalizations.of(context)!
+                                //                 .disclaimer,
+                                //           ),
+                                //         ],
+                                //       ),
+                                //       Text(
+                                //         AppLocalizations.of(context)!
+                                //             .disclaimerText,
+                                //         style: TextStyle(
+                                //           color: Colors.grey.withOpacity(0.7),
+                                //         ),
+                                //       ),
+                                //     ],
+                                //   ),
+                                // ),
                               ],
                             ),
                           ],

@@ -395,19 +395,19 @@ class _HomePageState extends State<HomePage> {
                           Navigator.pushNamed(context, '/downloads');
                         },
                       ),
-                      ListTile(
-                        title: Text(AppLocalizations.of(context)!.playlists),
-                        contentPadding:
-                            const EdgeInsets.symmetric(horizontal: 20.0),
-                        leading: Icon(
-                          Icons.playlist_play_rounded,
-                          color: Theme.of(context).iconTheme.color,
-                        ),
-                        onTap: () {
-                          Navigator.pop(context);
-                          Navigator.pushNamed(context, '/playlists');
-                        },
-                      ),
+                      // ListTile(
+                      //   title: Text(AppLocalizations.of(context)!.playlists),
+                      //   contentPadding:
+                      //       const EdgeInsets.symmetric(horizontal: 20.0),
+                      //   leading: Icon(
+                      //     Icons.playlist_play_rounded,
+                      //     color: Theme.of(context).iconTheme.color,
+                      //   ),
+                      //   onTap: () {
+                      //     Navigator.pop(context);
+                      //     Navigator.pushNamed(context, '/playlists');
+                      //   },
+                      // ),
                       ListTile(
                         title: Text(AppLocalizations.of(context)!.settings),
                         contentPadding:
@@ -876,14 +876,14 @@ class _HomePageState extends State<HomePage> {
                             selectedColor:
                                 Theme.of(context).colorScheme.secondary,
                           ),
-                          SalomonBottomBarItem(
-                            icon: const Icon(Icons.trending_up_rounded),
-                            title: Text(
-                              AppLocalizations.of(context)!.topCharts,
-                            ),
-                            selectedColor:
-                                Theme.of(context).colorScheme.secondary,
-                          ),
+                          // SalomonBottomBarItem(
+                          //   icon: const Icon(Icons.trending_up_rounded),
+                          //   title: Text(
+                          //     AppLocalizations.of(context)!.topCharts,
+                          //   ),
+                          //   selectedColor:
+                          //       Theme.of(context).colorScheme.secondary,
+                          // ),
                           // SalomonBottomBarItem(
                           //   icon: const Icon(MdiIcons.youtube),
                           //   title: Text(AppLocalizations.of(context)!.youTube),

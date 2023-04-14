@@ -107,13 +107,13 @@ class _LibraryPageState extends State<LibraryPage> {
             Navigator.pushNamed(context, '/downloads');
           },
         ),
-        LibraryTile(
-          title: AppLocalizations.of(context)!.playlists,
-          icon: Icons.playlist_play_rounded,
-          onTap: () {
-            Navigator.pushNamed(context, '/playlists');
-          },
-        ),
+        // LibraryTile(
+        //   title: AppLocalizations.of(context)!.playlists,
+        //   icon: Icons.playlist_play_rounded,
+        //   onTap: () {
+        //     Navigator.pushNamed(context, '/playlists');
+        //   },
+        // ),
       ],
     );
   }

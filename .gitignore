@@ -1,38 +1,4 @@
-Skip to content
-Search or jump to…
-Pull requests
-Issues
-Codespaces
-Marketplace
-Explore
- 
-@HPhucDev 
-flutter
-/
-flutter
-Public
-Fork your own copy of flutter/flutter
-Code
-Issues
-5k+
-Pull requests
-194
-Actions
-Projects
-173
-Wiki
-Security
-Insights
-flutter/.gitignore
-@timsneath
-timsneath Disable formatting on save for Dart and HTML files (#122048)
-…
-Latest commit 47c0723 3 weeks ago
- History
- 24 contributors
-@gspencergoog@jonahwilliams@xster@jmagman@christopherfujino@mravn-google@hlwhl@goderbauer@cbracken@yjbanov@timsneath@sigurdm
-133 lines (120 sloc)  2.56 KB
- 
+
 
 # Miscellaneous
 *.class
