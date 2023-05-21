@@ -17,7 +17,7 @@ import 'package:blackhole/Screens/Settings/setting.dart';
 import 'package:blackhole/Screens/Top Charts/top.dart';
 import 'package:blackhole/Screens/YouTube/youtube_home.dart';
 import 'package:blackhole/Services/ext_storage_provider.dart';
-// import 'package:device_info_plus/device_info_plus.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -43,9 +43,17 @@ class _HomePageState extends State<HomePage> {
       Hive.box('settings').get('checkUpdate', defaultValue: false) as bool;
   bool autoBackup =
       Hive.box('settings').get('autoBackup', defaultValue: false) as bool;
+  List sectionsToShow = Hive.box('settings').get(
+    'sectionsToShow',
+    defaultValue: ['Home', 'YouTube', 'Library'],
+  ) as List;
   DateTime? backButtonPressTime;
 
   void callback() {
+    sectionsToShow = Hive.box('settings').get(
+      'sectionsToShow',
+      defaultValue: ['Home', 'YouTube', 'Library'],
+    ) as List;
     setState(() {});
   }
 
@@ -131,16 +139,16 @@ class _HomePageState extends State<HomePage> {
               value['LatestVersion'] as String,
               appVersion!,
             )) {
-              // List? abis =
-              // await Hive.box('settings').get('supportedAbis') as List?;
+              List? abis =
+                  await Hive.box('settings').get('supportedAbis') as List?;
 
-              // if (abis == null) {
-              // final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-              // final AndroidDeviceInfo androidDeviceInfo =
-              //     await deviceInfo.androidInfo;
-              // abis = androidDeviceInfo.supportedAbis;
-              // await Hive.box('settings').put('supportedAbis', abis);
-              // }
+              if (abis == null) {
+                final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+                final AndroidDeviceInfo androidDeviceInfo =
+                    await deviceInfo.androidInfo;
+                abis = androidDeviceInfo.supportedAbis;
+                await Hive.box('settings').put('supportedAbis', abis);
+              }
 
               ShowSnackBar().showSnackBar(
                 context,
@@ -151,27 +159,24 @@ class _HomePageState extends State<HomePage> {
                   label: AppLocalizations.of(context)!.update,
                   onPressed: () {
                     Navigator.pop(context);
-                    launchUrl(
-                      Uri.parse(value['LatestUrl'].toString()),
-                    );
-                    // if (abis!.contains('arm64-v8a')) {
-                    //   launchUrl(
-                    //     Uri.parse(value['arm64-v8a'] as String),
-                    //     mode: LaunchMode.externalApplication,
-                    //   );
-                    // } else {
-                    //   if (abis.contains('armeabi-v7a')) {
-                    //     launchUrl(
-                    //       Uri.parse(value['armeabi-v7a'] as String),
-                    //       mode: LaunchMode.externalApplication,
-                    //     );
-                    //   } else {
-                    //     launchUrl(
-                    //       Uri.parse(value['universal'] as String),
-                    //       mode: LaunchMode.externalApplication,
-                    //     );
-                    //   }
-                    // }
+                    if (abis!.contains('arm64-v8a')) {
+                      launchUrl(
+                        Uri.parse(value['arm64-v8a'] as String),
+                        mode: LaunchMode.externalApplication,
+                      );
+                    } else {
+                      if (abis.contains('armeabi-v7a')) {
+                        launchUrl(
+                          Uri.parse(value['armeabi-v7a'] as String),
+                          mode: LaunchMode.externalApplication,
+                        );
+                      } else {
+                        launchUrl(
+                          Uri.parse(value['universal'] as String),
+                          mode: LaunchMode.externalApplication,
+                        );
+                      }
+                    }
                   },
                 ),
               );
@@ -222,6 +227,7 @@ class _HomePageState extends State<HomePage> {
           if (autoBackPath == '') {
             ExtStorageProvider.getExtStorage(
               dirName: 'BlackHole/Backups',
+              writeAccess: true,
             ).then((value) {
               Hive.box('settings').put('autoBackPath', value);
               createBackup(
@@ -395,19 +401,19 @@ class _HomePageState extends State<HomePage> {
                           Navigator.pushNamed(context, '/downloads');
                         },
                       ),
-                      // ListTile(
-                      //   title: Text(AppLocalizations.of(context)!.playlists),
-                      //   contentPadding:
-                      //       const EdgeInsets.symmetric(horizontal: 20.0),
-                      //   leading: Icon(
-                      //     Icons.playlist_play_rounded,
-                      //     color: Theme.of(context).iconTheme.color,
-                      //   ),
-                      //   onTap: () {
-                      //     Navigator.pop(context);
-                      //     Navigator.pushNamed(context, '/playlists');
-                      //   },
-                      // ),
+                      ListTile(
+                        title: Text(AppLocalizations.of(context)!.playlists),
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 20.0),
+                        leading: Icon(
+                          Icons.playlist_play_rounded,
+                          color: Theme.of(context).iconTheme.color,
+                        ),
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.pushNamed(context, '/playlists');
+                        },
+                      ),
                       ListTile(
                         title: Text(AppLocalizations.of(context)!.settings),
                         contentPadding:
@@ -528,12 +534,12 @@ class _HomePageState extends State<HomePage> {
                             icon: const Icon(Icons.home_rounded),
                             label: Text(AppLocalizations.of(context)!.home),
                           ),
-                          NavigationRailDestination(
-                            icon: const Icon(Icons.trending_up_rounded),
-                            label: Text(
-                              AppLocalizations.of(context)!.topCharts,
-                            ),
-                          ),
+                          // NavigationRailDestination(
+                          //   icon: const Icon(Icons.trending_up_rounded),
+                          //   label: Text(
+                          //     AppLocalizations.of(context)!.topCharts,
+                          //   ),
+                          // ),
                           NavigationRailDestination(
                             icon: const Icon(MdiIcons.youtube),
                             label: Text(AppLocalizations.of(context)!.youTube),
@@ -735,7 +741,7 @@ class _HomePageState extends State<HomePage> {
                                                                   .width -
                                                               75,
                                                         ),
-                                                  height: 52.0,
+                                                  height: 55.0,
                                                   duration: const Duration(
                                                     milliseconds: 150,
                                                   ),
@@ -783,7 +789,7 @@ class _HomePageState extends State<HomePage> {
                                                           color:
                                                               Theme.of(context)
                                                                   .textTheme
-                                                                  .caption!
+                                                                  .bodySmall!
                                                                   .color,
                                                           fontWeight:
                                                               FontWeight.normal,
@@ -838,11 +844,14 @@ class _HomePageState extends State<HomePage> {
                                   ),
                               ],
                             ),
-                            TopCharts(
-                              pageController: _pageController,
-                            ),
-                            // const YouTube(),
+                            // if (sectionsToShow.contains('Top Charts'))
+                            //   TopCharts(
+                            //     pageController: _pageController,
+                            //   ),
+                            const YouTube(),
                             const LibraryPage(),
+                            if (sectionsToShow.contains('Settings'))
+                              SettingPage(callback: callback),
                           ],
                         ),
                       ),
@@ -876,26 +885,35 @@ class _HomePageState extends State<HomePage> {
                             selectedColor:
                                 Theme.of(context).colorScheme.secondary,
                           ),
-                          // SalomonBottomBarItem(
-                          //   icon: const Icon(Icons.trending_up_rounded),
-                          //   title: Text(
-                          //     AppLocalizations.of(context)!.topCharts,
+                          // if (sectionsToShow.contains('Top Charts'))
+                          //   SalomonBottomBarItem(
+                          //     icon: const Icon(Icons.trending_up_rounded),
+                          //     title: Text(
+                          //       AppLocalizations.of(context)!.topCharts,
+                          //     ),
+                          //     selectedColor:
+                          //         Theme.of(context).colorScheme.secondary,
                           //   ),
-                          //   selectedColor:
-                          //       Theme.of(context).colorScheme.secondary,
-                          // ),
-                          // SalomonBottomBarItem(
-                          //   icon: const Icon(MdiIcons.youtube),
-                          //   title: Text(AppLocalizations.of(context)!.youTube),
-                          //   selectedColor:
-                          //       Theme.of(context).colorScheme.secondary,
-                          // ),
+                          SalomonBottomBarItem(
+                            icon: const Icon(MdiIcons.youtube),
+                            title: Text(AppLocalizations.of(context)!.youTube),
+                            selectedColor:
+                                Theme.of(context).colorScheme.secondary,
+                          ),
                           SalomonBottomBarItem(
                             icon: const Icon(Icons.my_library_music_rounded),
                             title: Text(AppLocalizations.of(context)!.library),
                             selectedColor:
                                 Theme.of(context).colorScheme.secondary,
                           ),
+                          if (sectionsToShow.contains('Settings'))
+                            SalomonBottomBarItem(
+                              icon: const Icon(Icons.settings_rounded),
+                              title:
+                                  Text(AppLocalizations.of(context)!.settings),
+                              selectedColor:
+                                  Theme.of(context).colorScheme.secondary,
+                            ),
                         ],
                       ),
                     );

@@ -33,7 +33,7 @@ class Collage extends StatelessWidget {
             ? GridView.count(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: imageList.length < 3 ? 1 : 2,
+                crossAxisCount: imageList.length < 4 ? 1 : 2,
                 children: imageList
                     .map(
                       (image) => CachedNetworkImage(
@@ -100,7 +100,7 @@ class OfflineCollage extends StatelessWidget {
             ? GridView.count(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: imageList.length < 3 ? 1 : 2,
+                crossAxisCount: imageList.length < 4 ? 1 : 2,
                 children: imageList.map((image) {
                   return image == null
                       ? Image(

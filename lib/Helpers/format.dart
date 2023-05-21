@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:blackhole/APIs/api.dart';
 import 'package:blackhole/Helpers/extensions.dart';
+import 'package:blackhole/Helpers/image_resolution_modifier.dart';
 import 'package:dart_des/dart_des.dart';
 import 'package:hive/hive.dart';
 import 'package:logging/logging.dart';
@@ -43,7 +43,9 @@ class FormatResponse {
       }
 
       if (response != null && response.containsKey('Error')) {
-        log('Error at index $i inside FormatSongsResponse: ${response["Error"]}');
+        Logger.root.severe(
+          'Error at index $i inside FormatSongsResponse: ${response["Error"]}',
+        );
       } else {
         if (response != null) {
           searchedList.add(response);
@@ -113,11 +115,7 @@ class FormatResponse {
         'album_artist': response['more_info'] == null
             ? response['music']
             : response['more_info']['music'],
-        'image': response['image']
-            .toString()
-            .replaceAll('150x150', '500x500')
-            .replaceAll('50x50', '500x500')
-            .replaceAll('http:', 'https:'),
+        'image': getImageUrl(response['image'].toString()),
         'perma_url': response['perma_url'],
         'url': decode(response['more_info']['encrypted_media_url'].toString()),
       };
@@ -183,11 +181,7 @@ class FormatResponse {
         'album_artist': response['more_info'] == null
             ? response['music']
             : response['more_info']['music'],
-        'image': response['image']
-            .toString()
-            .replaceAll('150x150', '500x500')
-            .replaceAll('50x50', '500x500')
-            .replaceAll('http:', 'https:'),
+        'image': getImageUrl(response['image'].toString()),
         'perma_url': response['perma_url'],
         'url': decode(response['encrypted_media_url'].toString())
       };
@@ -219,7 +213,9 @@ class FormatResponse {
           break;
       }
       if (response!.containsKey('Error')) {
-        log('Error at index $i inside FormatAlbumResponse: ${response["Error"]}');
+        Logger.root.severe(
+          'Error at index $i inside FormatAlbumResponse: ${response["Error"]}',
+        );
       } else {
         searchedAlbumList.add(response);
       }
@@ -262,11 +258,7 @@ class FormatResponse {
         'album_artist': response['more_info'] == null
             ? response['music']
             : response['more_info']['music'],
-        'image': response['image']
-            .toString()
-            .replaceAll('150x150', '500x500')
-            .replaceAll('50x50', '500x500')
-            .replaceAll('http:', 'https:'),
+        'image': getImageUrl(response['image'].toString()),
         'count': response['more_info']?['song_pids'] == null
             ? 0
             : response['more_info']['song_pids'].toString().split(', ').length,
@@ -274,7 +266,6 @@ class FormatResponse {
         'perma_url': response['url'].toString(),
       };
     } catch (e) {
-      log('Error inside formatSingleAlbumResponse: $e');
       Logger.root.severe('Error inside formatSingleAlbumResponse: $e');
       return {'Error': e};
     }
@@ -301,15 +292,10 @@ class FormatResponse {
         'album_artist': response['more_info'] == null
             ? response['music']
             : response['more_info']['music'],
-        'image': response['image']
-            .toString()
-            .replaceAll('150x150', '500x500')
-            .replaceAll('50x50', '500x500')
-            .replaceAll('http:', 'https:'),
+        'image': getImageUrl(response['image'].toString()),
         'perma_url': response['url'].toString(),
       };
     } catch (e) {
-      log('Error inside formatSinglePlaylistResponse: $e');
       Logger.root.severe('Error inside formatSinglePlaylistResponse: $e');
       return {'Error': e};
     }
@@ -342,14 +328,9 @@ class FormatResponse {
         'album_artist': response['more_info'] == null
             ? response['music']
             : response['more_info']['music'],
-        'image': response['image']
-            .toString()
-            .replaceAll('150x150', '500x500')
-            .replaceAll('50x50', '500x500')
-            .replaceAll('http:', 'https:'),
+        'image': getImageUrl(response['image'].toString()),
       };
     } catch (e) {
-      log('Error inside formatSingleArtistResponse: $e');
       Logger.root.severe('Error inside formatSingleArtistResponse: $e');
       return {'Error': e};
     }
@@ -361,7 +342,9 @@ class FormatResponse {
       final Map response =
           await formatSingleArtistTopAlbumSongResponse(responseList[i] as Map);
       if (response.containsKey('Error')) {
-        log('Error at index $i inside FormatArtistTopAlbumsResponse: ${response["Error"]}');
+        Logger.root.severe(
+          'Error at index $i inside FormatArtistTopAlbumsResponse: ${response["Error"]}',
+        );
       } else {
         result.add(response);
       }
@@ -418,11 +401,7 @@ class FormatResponse {
         'album_artist': response['more_info'] == null
             ? response['music']
             : response['more_info']['music'],
-        'image': response['image']
-            .toString()
-            .replaceAll('150x150', '500x500')
-            .replaceAll('50x50', '500x500')
-            .replaceAll('http:', 'https:'),
+        'image': getImageUrl(response['image'].toString()),
       };
     } catch (e) {
       Logger.root
@@ -437,7 +416,9 @@ class FormatResponse {
       final Map response =
           await formatSingleSimilarArtistResponse(responseList[i] as Map);
       if (response.containsKey('Error')) {
-        log('Error at index $i inside FormatSimilarArtistsResponse: ${response["Error"]}');
+        Logger.root.severe(
+          'Error at index $i inside FormatSimilarArtistsResponse: ${response["Error"]}',
+        );
       } else {
         result.add(response);
       }
@@ -453,11 +434,7 @@ class FormatResponse {
         'artist': response['name'].toString().unescape(),
         'title': response['name'].toString().unescape(),
         'subtitle': response['dominantType'].toString().capitalize(),
-        'image': response['image_url']
-            .toString()
-            .replaceAll('150x150', '500x500')
-            .replaceAll('50x50', '500x500')
-            .replaceAll('http:', 'https:'),
+        'image': getImageUrl(response['image_url'].toString()),
         'artistToken': response['perma_url'].toString().split('/').last,
         'perma_url': response['perma_url'].toString(),
       };
@@ -477,11 +454,7 @@ class FormatResponse {
             ? response['subtitle'].toString().unescape()
             : response['description'].toString().unescape(),
         'title': response['title'].toString().unescape(),
-        'image': response['image']
-            .toString()
-            .replaceAll('150x150', '500x500')
-            .replaceAll('50x50', '500x500')
-            .replaceAll('http:', 'https:'),
+        'image': getImageUrl(response['image'].toString()),
       };
     } catch (e) {
       Logger.root.severe('Error inside formatSingleShowResponse: $e');
@@ -492,22 +465,15 @@ class FormatResponse {
   static Future<Map> formatHomePageData(Map data) async {
     try {
       if (data['new_trending'] != null) {
-        data['new_trending'] = await formatSongsInList(
-          data['new_trending'] as List,
-          fetchDetails: false,
-        );
+        data['new_trending'] =
+            await formatSongsInList(data['new_trending'] as List);
       }
       if (data['new_albums'] != null) {
-        data['new_albums'] = await formatSongsInList(
-          data['new_albums'] as List,
-          fetchDetails: false,
-        );
+        data['new_albums'] =
+            await formatSongsInList(data['new_albums'] as List);
       }
       if (data['city_mod'] != null) {
-        data['city_mod'] = await formatSongsInList(
-          data['city_mod'] as List,
-          fetchDetails: true,
-        );
+        data['city_mod'] = await formatSongsInList(data['city_mod'] as List);
       }
       final List promoList = [];
       final List promoListTemp = [];
@@ -522,10 +488,8 @@ class FormatResponse {
         }
       });
       for (int i = 0; i < promoList.length; i++) {
-        data[promoList[i]] = await formatSongsInList(
-          data[promoList[i]] as List,
-          fetchDetails: false,
-        );
+        data[promoList[i]] =
+            await formatSongsInList(data[promoList[i]] as List);
       }
       data['collections'] = [
         'new_trending',
@@ -540,7 +504,6 @@ class FormatResponse {
       ];
       data['collections_temp'] = promoListTemp;
     } catch (e) {
-      log('Error in formatHomePageData: $e');
       Logger.root.severe('Error inside formatHomePageData: $e');
     }
     return data;
@@ -550,40 +513,32 @@ class FormatResponse {
     try {
       final List promoList = data['collections_temp'] as List;
       for (int i = 0; i < promoList.length; i++) {
-        data[promoList[i]] = await formatSongsInList(
-          data[promoList[i]] as List,
-          fetchDetails: true,
-        );
+        data[promoList[i]] =
+            await formatSongsInList(data[promoList[i]] as List);
       }
       data['collections'].addAll(promoList);
       data['collections_temp'] = [];
     } catch (e) {
-      log('Error in formatPromoLists: $e');
       Logger.root.severe('Error inside formatPromoLists: $e');
     }
     return data;
   }
 
-  static Future<List> formatSongsInList(
-    List list, {
-    required bool fetchDetails,
-  }) async {
+  static Future<List> formatSongsInList(List list) async {
     if (list.isNotEmpty) {
       for (int i = 0; i < list.length; i++) {
         final Map item = list[i] as Map;
         if (item['type'] == 'song') {
           if (item['mini_obj'] as bool? ?? false) {
-            if (fetchDetails) {
-              Map cachedDetails = Hive.box('cache')
-                  .get(item['id'].toString(), defaultValue: {}) as Map;
-              if (cachedDetails.isEmpty) {
-                cachedDetails =
-                    await SaavnAPI().fetchSongDetails(item['id'].toString());
-                Hive.box('cache')
-                    .put(cachedDetails['id'].toString(), cachedDetails);
-              }
-              list[i] = cachedDetails;
+            Map cachedDetails = Hive.box('cache')
+                .get(item['id'].toString(), defaultValue: {}) as Map;
+            if (cachedDetails.isEmpty) {
+              cachedDetails =
+                  await SaavnAPI().fetchSongDetails(item['id'].toString());
+              Hive.box('cache')
+                  .put(cachedDetails['id'].toString(), cachedDetails);
             }
+            list[i] = cachedDetails;
             continue;
           }
           list[i] = await formatSingleSongResponse(item);

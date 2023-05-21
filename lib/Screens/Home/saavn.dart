@@ -3,12 +3,14 @@ import 'dart:io';
 import 'package:blackhole/APIs/api.dart';
 import 'package:blackhole/CustomWidgets/collage.dart';
 import 'package:blackhole/CustomWidgets/horizontal_albumlist.dart';
+import 'package:blackhole/CustomWidgets/horizontal_albumlist_separated.dart';
 import 'package:blackhole/CustomWidgets/like_button.dart';
 import 'package:blackhole/CustomWidgets/on_hover.dart';
 import 'package:blackhole/CustomWidgets/snackbar.dart';
 import 'package:blackhole/CustomWidgets/song_tile_trailing_menu.dart';
 import 'package:blackhole/Helpers/extensions.dart';
 import 'package:blackhole/Helpers/format.dart';
+import 'package:blackhole/Helpers/image_resolution_modifier.dart';
 import 'package:blackhole/Screens/Common/song_list.dart';
 import 'package:blackhole/Screens/Library/liked.dart';
 import 'package:blackhole/Screens/Search/artists.dart';
@@ -72,7 +74,7 @@ class _SaavnHomePageState extends State<SaavnHomePage>
       case 'charts':
         return '';
       case 'radio_station':
-        return 'Radio • ${item['subtitle']?.toString().unescape()}';
+        return 'Radio • ${(item['subtitle']?.toString() ?? '').isEmpty ? 'JioSaavn' : item['subtitle']?.toString().unescape()}';
       case 'playlist':
         return 'Playlist • ${(item['subtitle']?.toString() ?? '').isEmpty ? 'JioSaavn' : item['subtitle'].toString().unescape()}';
       case 'song':
@@ -118,7 +120,7 @@ class _SaavnHomePageState extends State<SaavnHomePage>
             ? MediaQuery.of(context).size.width / 2
             : MediaQuery.of(context).size.height / 2.5;
     if (boxSize > 250) boxSize = 250;
-    if (recentList.length < playlistNames.length) {
+    if (playlistNames.length >= 3) {
       recentIndex = 0;
       playlistIndex = 1;
     } else {
@@ -159,12 +161,12 @@ class _SaavnHomePageState extends State<SaavnHomePage>
                               ),
                             ],
                           ),
-                          HorizontalAlbumsList(
+                          HorizontalAlbumsListSeparated(
                             songsList: recentList,
                             onTap: (int idx) {
                               PlayerInvoke.init(
-                                songsList: recentList,
-                                index: idx,
+                                songsList: [recentList[idx]],
+                                index: 0,
                                 isOffline: false,
                               );
                               Navigator.pushNamed(context, '/player');
@@ -177,7 +179,9 @@ class _SaavnHomePageState extends State<SaavnHomePage>
                 return (playlistNames.isEmpty ||
                         !(Hive.box('settings')
                             .get('showPlaylist', defaultValue: true) as bool) ||
-                        likedCount() == 0)
+                        (playlistNames.length == 1 &&
+                            playlistNames.first == 'Favorite Songs' &&
+                            likedCount() == 0))
                     ? const SizedBox()
                     : Column(
                         children: [
@@ -324,7 +328,7 @@ class _SaavnHomePageState extends State<SaavnHomePage>
                                                           color:
                                                               Theme.of(context)
                                                                   .textTheme
-                                                                  .caption!
+                                                                  .bodySmall!
                                                                   .color,
                                                         ),
                                                       )
@@ -498,20 +502,9 @@ class _SaavnHomePageState extends State<SaavnHomePage>
                                                       'assets/cover.jpg',
                                                     ),
                                                   ),
-                                                  imageUrl: item['image']
-                                                      .toString()
-                                                      .replaceAll(
-                                                        'http:',
-                                                        'https:',
-                                                      )
-                                                      .replaceAll(
-                                                        '50x50',
-                                                        '500x500',
-                                                      )
-                                                      .replaceAll(
-                                                        '150x150',
-                                                        '500x500',
-                                                      ),
+                                                  imageUrl: getImageUrl(
+                                                    item['image'].toString(),
+                                                  ),
                                                   placeholder: (context, url) =>
                                                       Image(
                                                     fit: BoxFit.cover,
@@ -633,20 +626,9 @@ class _SaavnHomePageState extends State<SaavnHomePage>
                                             'assets/cover.jpg',
                                           ),
                                         ),
-                                        imageUrl: item['image']
-                                            .toString()
-                                            .replaceAll(
-                                              'http:',
-                                              'https:',
-                                            )
-                                            .replaceAll(
-                                              '50x50',
-                                              '500x500',
-                                            )
-                                            .replaceAll(
-                                              '150x150',
-                                              '500x500',
-                                            ),
+                                        imageUrl: getImageUrl(
+                                          item['image'].toString(),
+                                        ),
                                         placeholder: (context, url) => Image(
                                           fit: BoxFit.cover,
                                           image: (item['type'] == 'playlist' ||
@@ -834,7 +816,7 @@ class _SaavnHomePageState extends State<SaavnHomePage>
                                                         fontSize: 11,
                                                         color: Theme.of(context)
                                                             .textTheme
-                                                            .caption!
+                                                            .bodySmall!
                                                             .color,
                                                       ),
                                                     )

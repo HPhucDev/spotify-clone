@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:blackhole/Helpers/format.dart';
@@ -87,7 +86,6 @@ class SaavnAPI {
         result = await FormatResponse.formatHomePageData(data);
       }
     } catch (e) {
-      log('Error in fetchHomePageData: $e');
       Logger.root.severe('Error in fetchHomePageData: $e');
     }
     return result;
@@ -236,7 +234,6 @@ class SaavnAPI {
         }).toList();
       }
     } catch (e) {
-      log('Error in getTopSearches: $e');
       Logger.root.severe('Error in getTopSearches: $e');
     }
     return List.empty();
@@ -267,7 +264,6 @@ class SaavnAPI {
         };
       }
     } catch (e) {
-      log('Error in fetchSongSearchResults: $e');
       Logger.root.severe('Error in fetchSongSearchResults: $e');
       return {
         'songs': List.empty(),
@@ -426,7 +422,6 @@ class SaavnAPI {
         };
       }
     } catch (e) {
-      log('Error in fetchAlbumSongs: $e');
       Logger.root.severe('Error in fetchAlbumSongs: $e');
       return {
         'songs': List.empty(),
@@ -553,7 +548,6 @@ class SaavnAPI {
         };
       }
     } catch (e) {
-      log('Error in fetchPlaylistSongs: $e');
       Logger.root.severe('Error in fetchPlaylistSongs: $e');
       return {
         'songs': List.empty(),
